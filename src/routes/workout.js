@@ -8,7 +8,7 @@ const idError = (id) => new Error(`Invalid object id \`${id}\``);
 
 router.get("/", (req, res, next) => {
   Workout.find({})
-    .then((docs) => res.json(docs))
+    .then((docs) => res.json({ docs }))
     .catch((error) => next(error));
 });
 
@@ -16,14 +16,14 @@ router.get("/:_id", (req, res, next) => {
   const { _id } = req.params;
 
   Workout.findById(_id)
-    .then((workout) => workout ? res.json(workout) : next(idError(_id)))
+    .then((workout) => workout ? res.json({ workout }) : next(idError(_id)))
     .catch((error) => next(error));
 });
 
 router.post("/", (req, res, next) => {
   const workout = new Workout();
   workout.save()
-    .then((workout) => res.json(workout))
+    .then((workout) => res.json({ workout }))
     .catch((error) => next(error));
 });
 
@@ -35,7 +35,7 @@ router.post("/exercise/:_id", (req, res, next) => {
   const options = { new: true };
 
   Workout.findByIdAndUpdate(_id, update, options)
-    .then((workout) => workout ? res.json(workout) : next(idError(_id)))
+    .then((workout) => workout ? res.json({ workout }) : next(idError(_id)))
     .catch((error) => next(error));
 });
 
@@ -48,7 +48,7 @@ router.post("/series/:exercise_id", (req, res, next) => {
   const options = { new: true };
 
   Workout.findOneAndUpdate(query, update, options)
-    .then((workout) => workout ? res.json(workout) : next(idError(exercise_id)))
+    .then((workout) => workout ? res.json({ workout }) : next(idError(exercise_id)))
     .catch((error) => next(error));
 });
 
@@ -68,7 +68,7 @@ router.delete("/exercise/:exercise_id", (req, res, next) => {
   const options = { new: true };
 
   Workout.findOneAndUpdate(query, update, options)
-    .then((workout) => workout ? res.json(workout) : next(idError(exercise_id)))
+    .then((workout) => workout ? res.json({ workout }) : next(idError(exercise_id)))
     .catch((error) => next(error));
 });
 
@@ -80,7 +80,7 @@ router.delete("/series/:series_id", (req, res, next) => {
   const options = { new: true };
 
   Workout.findOneAndUpdate(query, update, options)
-    .then((workout) => workout ? res.json(workout) : next(series_id))
+    .then((workout) => workout ? res.json({ workout }) : next(series_id))
     .catch((error) => next(error));
 });
 
