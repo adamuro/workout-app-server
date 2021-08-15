@@ -8,6 +8,7 @@ const idError = (id) => new Error(`Invalid object id \`${id}\``);
 
 router.get("/", (req, res, next) => {
   Workout.find({})
+    .sort({ createdAt: -1 })
     .then((docs) => res.json({ docs }))
     .catch((error) => next(error));
 });
