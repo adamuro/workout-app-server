@@ -1,1 +1,1 @@
-# Backend part of my workout progression tracking app
+# Backend part of my workout progress tracking app
