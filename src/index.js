@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 
+const userRouter = require("./routes/user");
 const workoutRouter = require("./routes/workout");
 const { notFound, errorHandler } = require("./middleware/error");
 
@@ -26,6 +27,7 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 //Routes
 app.get("/", (req, res) => res.json("Hello"));
 app.use("/workout", workoutRouter);
+app.use("/user", userRouter);
 
 //Error handling
 app.use(notFound);

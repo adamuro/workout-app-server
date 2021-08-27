@@ -22,8 +22,7 @@ router.get("/:_id", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  const workout = new Workout();
-  workout.save()
+  Workout.create({})
     .then((workout) => res.json({ workout }))
     .catch((error) => next(error));
 });
