@@ -5,3 +5,6 @@
 - Node.js
 - Express
 - MongoDB / mongoose
+- Jsonwebtoken
+- Joi
+- Redis
