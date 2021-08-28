@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const options = { timestapms: false };
+const options = { timestapms: true };
 
 const userSchema = new Schema({
   username: String,

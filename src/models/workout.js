@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const { ObjectId } = mongoose.Types;
 
-const options = { timestamps: { updatedAt: false }};
+const options = { timestamps: true };
 
 const Series = {
   weight: Number,
@@ -14,6 +15,7 @@ const Exercise = {
 };
 
 const workoutSchema = new Schema({
+  user: ObjectId,
   exercises: [Exercise]
 }, options);
 
