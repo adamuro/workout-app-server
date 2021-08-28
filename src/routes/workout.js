@@ -2,12 +2,14 @@ const { Router } = require("express");
 
 const Workout = require("../models/workout");
 
-const router = Router();
-
 const idError = (id) => new Error(`Invalid object id \`${id}\``);
 
+const router = Router();
+
 router.get("/", (req, res, next) => {
-  Workout.find({})
+  const { _id } = req.user;
+
+  Workout.find({ user: _id })
     .sort({ createdAt: -1 })
     .then((docs) => res.json({ docs }))
     .catch((error) => next(error));
@@ -22,7 +24,9 @@ router.get("/:_id", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  Workout.create({})
+  const { _id } = req.user;
+
+  Workout.create({ user: _id })
     .then((workout) => res.json({ workout }))
     .catch((error) => next(error));
 });

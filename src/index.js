@@ -9,6 +9,7 @@ require("dotenv").config();
 const userRouter = require("./routes/user");
 const workoutRouter = require("./routes/workout");
 const { notFound, errorHandler } = require("./middleware/error");
+const verifyToken = require("./middleware/verifyToken");
 
 //Connect to database
 const dbUsername = process.env.DATABASE_USERNAME;
@@ -26,7 +27,7 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 
 //Routes
 app.get("/", (req, res) => res.json("Hello"));
-app.use("/workout", workoutRouter);
+app.use("/workout", verifyToken, workoutRouter);
 app.use("/user", userRouter);
 
 //Error handling

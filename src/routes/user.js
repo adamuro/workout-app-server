@@ -2,10 +2,6 @@ const { Router } = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const redis = require("redis");
-const { promisify } = require("util");
-
-// const verifyToken = require("../middleware/verifyToken");
-// const { registerValidation, loginValidation } = require("../middleware/validation/user");
 
 const User = require("../models/user");
 const userValidation = require("../middleware/validation/user");
@@ -13,12 +9,11 @@ const verifyToken = require("../middleware/verifyToken");
 
 const redisUrl = process.env.REDISCLOUD_URL;
 const redisClient = redis.createClient(redisUrl, { no_ready_check: true });
-redisClient.sismember = promisify(redisClient.sismember);
-
-const router = Router();
 
 const usernameUsedError = (username) => new Error(`Username already used \`${username}\``);
 const loginError = () => new Error("Invalid username or password");
+
+const router = Router();
 
 router.post("/register", userValidation, async (req, res, next) => {
   const { username, password } = req.body;
@@ -75,8 +70,8 @@ router.delete("/", verifyToken, async (req, res, next) => {
     .catch((error) => next(error));
 });
 
-router.delete("/logout/:token", async (req, res, next) => {
-  const { token } = req.params;
+router.delete("/logout", verifyToken, async (req, res, next) => {
+  const { token } = req;
 
   redisClient.srem("tokens", token);
   res.json({ message: "Success" });
