@@ -46,10 +46,10 @@ router.post("/login", async (req, res, next) => {
       .then((user) => ({ user }))
       .catch((error) => ({ error }));
     if (error) return next(error);
-    if (!user) return next(loginError);
+    if (!user) return next(loginError());
 
     const passwordValid = bcrypt.compareSync(password, user.password);
-    if (!passwordValid) return next(loginError);
+    if (!passwordValid) return next(loginError());
 
     const { _id } = user;
     const tokenSecret = process.env.TOKEN_SECRET;
