@@ -18,9 +18,10 @@ const router = Router();
 router.post("/register", userValidation, async (req, res, next) => {
   const { username, password } = req.body;
 
-  const usernameUsed = await User.findOne({ username })
-    .then((user) => user !== null)
-    .catch((error) => next(error));
+  const { usernameUsed, error } = await User.findOne({ username })
+    .then((user) => ({ usernameUsed: user !== null }))
+    .catch((error) => ({ error }));
+  if (error) return next(error);
   if (usernameUsed) return next(usernameUsedError(username));
 
   const salt = bcrypt.genSaltSync(10);
@@ -28,8 +29,7 @@ router.post("/register", userValidation, async (req, res, next) => {
   const user = { username, password: hashedPassword };
 
   User.create(user)
-    .then((user) => {
-      const { _id, username } = user;
+    .then(({ _id, username }) => {
       const tokenSecret = process.env.TOKEN_SECRET;
       const token = jwt.sign({ _id, username }, tokenSecret);
       redisClient.sadd("tokens", token);
@@ -38,28 +38,23 @@ router.post("/register", userValidation, async (req, res, next) => {
     .catch((error) => next(error));
 });
 
-router.post("/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
+router.post("/login", userValidation, async (req, res, next) => {
+  const { username, password } = req.body;
 
-    const { user, error } = await User.findOne({ username })
-      .then((user) => ({ user }))
-      .catch((error) => ({ error }));
-    if (error) return next(error);
-    if (!user) return next(loginError());
+  const { user, error } = await User.findOne({ username })
+    .then((user) => ({ user }))
+    .catch((error) => ({ error }));
+  if (error) return next(error);
+  if (!user) return next(loginError());
 
-    const passwordValid = bcrypt.compareSync(password, user.password);
-    if (!passwordValid) return next(loginError());
+  const passwordValid = bcrypt.compareSync(password, user.password);
+  if (!passwordValid) return next(loginError());
 
-    const { _id } = user;
-    const tokenSecret = process.env.TOKEN_SECRET;
-    const token = jwt.sign({ _id, username }, tokenSecret);
-    redisClient.sadd("tokens", token);
-    res.json({ token });
-  } catch (error) {
-    res.status(400);
-    next(error);
-  }
+  const { _id } = user;
+  const tokenSecret = process.env.TOKEN_SECRET;
+  const token = jwt.sign({ _id, username }, tokenSecret);
+  redisClient.sadd("tokens", token);
+  res.json({ token });
 });
 
 router.delete("/", verifyToken, async (req, res, next) => {
